@@ -1,0 +1,29 @@
+sudo apt update
+sudo apt install libnginx-mod-rtmp
+
+sudo nano /etc/nginx/nginx.conf
+
+'''
+
+. . .
+rtmp {
+        server {
+                listen 1935;
+                chunk_size 4096;
+                allow publish 127.0.0.1;
+                deny publish all;
+
+                application live {
+                        live on;
+                        record off;
+                }
+        }
+}
+
+'''
+
+sudo ufw allow 1935/tcp
+
+sudo apt install ffmpeg
+
+ffmpeg -re -i "filename.mkv" -c:v copy -c:a aac -ar 44100 -ac 1 -f flv rtmp://localhost/live/stream
